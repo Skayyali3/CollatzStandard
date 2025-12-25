@@ -1,13 +1,13 @@
 # Collatz Conjecture Visualizer & Data Exporter
 A professional-grade Python tool that explores the 3n + 1 problem. This application doesn't just calculate sequences; it provides a full suite for data analysis and visualization.
 ### Features
-**-Algorithmic Calculation: Fast processing of the Collatz sequence for any integer, even if it is larger than amount of atoms in the entire universe**
+**-Algorithmic Calculation: Fast processing of the Collatz sequence for any integer**
 
 **-Interactive Visualization: Generates dynamic line graphs using Matplotlib to show the "hailstone" peaks and valleys.**
 
 **-Data Export: Utilizes Pandas to serialize sequence data into a `.csv` file for external analysis in Excel or SQL.**
 
-**-Adaptive Logarithmic Scaling: Automatically switches to $Log_{10}$ visualization for "Unspeakably High" numbers to prevent hardware overflow and maintain graph readability.**
+**-Adaptive Logarithmic Scaling: Automatically switches to $Log_{10}$ visualization for unspeakably high numbers to prevent hardware overflow and maintain graph readability.**
 
 ---
 
