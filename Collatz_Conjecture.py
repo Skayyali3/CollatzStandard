@@ -73,19 +73,16 @@ def visualize_graph():
             manager.full_screen_toggle()
     
     if is_massive:
-        # Convert values to log10 so they don't crash Matplotlib/Numpy
-        # We use a list comprehension to safely handle the big ints
-        plot_data = [math.log10(x) for x in last_sequence]
-        mat.plot(plot_data, color='royalblue', linewidth=1)
-        mat.ylabel("Value (Logarithmic Scale 10^n)")
-        mat.title(f"Collatz Path for {starting_number}\n(Displayed in Log Scale due to size)", pad=20)
+       mat.plot(last_sequence, color='royalblue', linewidth=1)
+       mat.yscale('log')
+       mat.ylabel("Value (log₁₀ scale)")
+       mat.title(f"Collatz Path for {starting_number}\n(Logarithmic Scale)", pad=20)
     else:
         mat.plot(last_sequence, marker='o', linestyle='-', color='royalblue')
         mat.ylabel("Value")
         mat.title(f"Collatz Sequence for {starting_number}", pad=20)
 
     mat.xlabel("Steps")
-    mat.ylabel("Value")
     mat.grid(True, linestyle='--', alpha=0.7)
 
     if not is_massive:
