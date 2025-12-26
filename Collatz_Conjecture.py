@@ -76,7 +76,7 @@ def visualize_graph():
        mat.plot(last_sequence, color='royalblue', linewidth=1)
        mat.yscale('log')
        mat.ylabel("Value (log₁₀ scale)")
-       mat.title(f"Collatz Path for {starting_number}\n(Logarithmic Scale)", pad=20)
+       mat.title(f"Collatz Path for {starting_number}\n(Logarithmic Scale)\nNote: display starts from highest number in sequence for convenience", pad=20)
     else:
         mat.plot(last_sequence, marker='o', linestyle='-', color='royalblue')
         mat.ylabel("Value")
