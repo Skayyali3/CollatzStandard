@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import filedialog, messagebox
 import pandas as pd 
 import matplotlib.pyplot as mat
-import math
+
 
 last_sequence = []
 
@@ -14,14 +14,15 @@ def parse_collatz(val):
             _, exponent_part = rest.split("^")
             
             # Use int() for the base if it has no decimal point
-            # This avoids the 10^308 limit of floats!
             if "." in base_part:
-                # If it's a decimal like 2.7, we handle it carefully
-                # Multiply by 10^exp, then convert to int
+                
                 return int(float(base_part) * (10 ** int(exponent_part)))
             else:
                 return int(base_part) * (10 ** int(exponent_part))
-            
+        elif "^" in val:
+                base_part, exponent_part = val.split("^")
+                return int(base_part) ** int(exponent_part) 
+        
         return int(float(val))
     except (ValueError, IndexError, OverflowError):
         return None
@@ -30,7 +31,7 @@ def collatz():
     try:
         n = parse_collatz(inpt.get())
         if n is None or n <= 0:
-            result.config(text="Error: Enter a positive integer (> 0).", bg="black", fg="red")
+            result.config(text="Error: Enter a positive integer and make it not larger than your RAM can handle", bg="black", fg="red")
             btn_export.pack_forget()
             btn_visualize.pack_forget()
             return
@@ -39,9 +40,9 @@ def collatz():
             if n % 2 == 0: n //= 2
             else: n = 3 * n + 1
             last_sequence.append(n)
-        sequence_str = ", ".join(map(str, last_sequence))
+        
         # Check the actual number of steps in the list
-        if len(last_sequence) >= 200: 
+        if len(last_sequence) >= 200 or max(last_sequence) > 1e18: 
              result.config(text=f"Steps: {len(last_sequence)} | Max Value: {max(last_sequence)} \nSequence too long to display (Export for details).", bg="tomato", fg="black")
         else:
              sequence_str = ", ".join(map(str, last_sequence))
@@ -49,9 +50,7 @@ def collatz():
         btn_export.pack(pady=5)
         btn_visualize.pack(pady=5)
     except ValueError:
-        result.config(text="Please enter a valid integer.", bg="black", fg="red")
-        btn_export.pack_forget()
-        btn_visualize.pack_forget()
+        pass
 
 
 def visualize_graph():
@@ -63,31 +62,30 @@ def visualize_graph():
 
     is_massive = max(last_sequence) > 1e18
 
-    mat.figure(figsize=(10, 6))
-    
-    if len(str(starting_number)) > 40 or len(last_sequence) > 200:
-        manager = mat.get_current_fig_manager()
+    fig, ax = mat.subplots()
+    manager = fig.canvas.manager
+    try:
+        manager.window.state('zoomed')          # Windows
+    except AttributeError:
         try:
-            manager.window.state('zoomed') 
+            manager.full_screen_toggle()        # macOS/Linux fallback
         except AttributeError:
-            manager.full_screen_toggle()
-    
+            pass
     if is_massive:
-       mat.plot(last_sequence, color='royalblue', linewidth=1)
-       mat.yscale('log')
-       mat.ylabel("Value (log₁₀ scale)")
-       mat.title(f"Collatz Path for {starting_number}\n(Logarithmic Scale)\nNote: display starts from highest number in sequence for convenience", pad=20)
+       ax.plot(last_sequence, color='royalblue', linewidth=1)
+       ax.set_yscale('log')
+       ax.set_ylabel("Value (log₁₀ scale)")
+       ax.set_title(f"Collatz Path for {starting_number}\n(Logarithmic Scale)\nNote: display starts from highest number in sequence for convenience", pad=20)
     else:
-        mat.plot(last_sequence, marker='o', linestyle='-', color='royalblue')
-        mat.ylabel("Value")
-        mat.title(f"Collatz Sequence for {starting_number}", pad=20)
+        ax.plot(last_sequence, marker='o', linestyle='-', color='royalblue')
+        ax.set_ylabel("Value")
+        ax.set_title(f"Collatz Sequence for {starting_number}", pad=20)
 
     mat.xlabel("Steps")
     mat.grid(True, linestyle='--', alpha=0.7)
 
     if not is_massive:
         import matplotlib.ticker as ticker
-        ax = mat.gca()
         formatter = ticker.ScalarFormatter(useMathText=True)
         formatter.set_scientific(True) 
         formatter.set_powerlimits((-3, 4)) 
@@ -115,7 +113,7 @@ root=tk.Tk()
 root.geometry("600x500")
 root.title("Collatz Conjecture Visualizer")
 root.config(bg="turquoise")
-lbl=tk.Label(root,text="Enter a number and click Submit", bg="turquoise", fg="black")
+lbl=tk.Label(root,text="Enter a number and click Submit\nStandard form and Exponential form are allowed", bg="turquoise", fg="black")
 lbl.pack()
 inpt=tk.Entry(root)
 inpt.pack()
