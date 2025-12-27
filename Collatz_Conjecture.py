@@ -9,21 +9,28 @@ last_sequence = []
 def parse_collatz(val):
     val = val.replace(" ", "").lower()
     try:
-        if "*" in val and "^" in val:
-            base_part, rest = val.split("*")
-            _, exponent_part = rest.split("^")
-            
-            # Use int() for the base if it has no decimal point
-            if "." in base_part:
-                
-                return int(float(base_part) * (10 ** int(exponent_part)))
+        # Handle 2.7*10^64 style
+        if "*10^" in val:
+            base, exp = val.split("*10^")
+            return int(float(base) * (10 ** int(exp)))
+        # Handle exponentiation like 2**64 or 2.7*10**64
+        elif "**" in val:
+            base, exp = val.split("**")
+            if "*10" in base:
+                base_num = float(base.replace("*10", ""))
+                return int(base_num * (10 ** int(exp)))
             else:
-                return int(base_part) * (10 ** int(exponent_part))
+                return int(float(base) ** int(exp))
+        # Handle simple exponentiation like 2^64
         elif "^" in val:
-                base_part, exponent_part = val.split("^")
-                return int(base_part) ** int(exponent_part) 
-        
-        return int(float(val))
+            base, exp = val.split("^")
+            return int(float(base) ** int(exp))
+        # Handle scientific notation like 2e64
+        elif "e" in val:
+            return int(float(val))
+        # Plain numbers
+        else:
+            return int(float(val))
     except (ValueError, IndexError, OverflowError):
         return None
 def collatz():
