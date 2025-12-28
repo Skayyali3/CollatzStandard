@@ -1,23 +1,31 @@
 # Collatz Conjecture Visualizer & Data Exporter
 A professional-grade Python tool that explores the 3n + 1 problem. This application doesn't just calculate sequences; it provides a full suite for data analysis and visualization.
-### Features
-**-Algorithmic Calculation: Fast processing of the Collatz sequence for any integer**
-
-**-Interactive Visualization: Generates dynamic line graphs using Matplotlib to show the "hailstone" peaks and valleys.**
-
-**-Data Export: Utilizes Pandas to serialize sequence data into a `.csv` file for external analysis in Excel or SQL.**
-
-**-Adaptive Logarithmic Scaling: Automatically switches to $Log_{10}$ visualization for unspeakably high numbers to prevent hardware overflow and maintain graph readability.**
 
 ---
 
-### Technologies Used:
-**Programming Language: Python**
+#### Note: entered numbers lose precision as they become more unspeakably high
+#### If you want to check out the Research on this project and the findings or just test out large numbers without any inaccuracies: *[Click Here](https://github.com/saifkayyali3/Collatz_Research)*
 
-**Libraries Used: Tkinter, Pandas and Matplolib**
+---
+
+## Features
+- Algorithmic Calculation: Fast processing of the Collatz sequence for any integer
+
+- Interactive Visualization: Generates dynamic line graphs using Matplotlib to show the "hailstone" peaks and valleys.
+
+- Data Export: Utilizes Pandas to serialize sequence data into a `.csv` file for external analysis in Excel or SQL.
+
+- Adaptive Logarithmic Scaling: Automatically switches to $Log_{10}$ visualization for unspeakably high numbers to prevent hardware overflow and maintain graph readability.
+
+---
+
+## Technologies Used:
+* Programming Language: *Python*
+
+* Libraries Used: `Tkinter`, `Pandas` and `Matplolib`
 
 
-**Concepts: Data Engineering pipelines, State Management, Mathematical Modeling.**
+* Concepts: Data Engineering pipelines, State Management, Mathematical Modeling.
 
 ---
 
@@ -28,15 +36,15 @@ A professional-grade Python tool that explores the 3n + 1 problem. This applicat
 
 ---
 
-### How to Run:
+## How to Run:
 Follow these steps to run the project locally:
 
-# 1. Clone the repository and enter:
+### 1. Clone the repository and enter:
 ```bash
 git clone https://github.com/saifkayyali3/CollatzStandard.git
 cd CollatzStandard
 ```
-# 2. Make a virtual environment
+### 2. Make a virtual environment
 ```bash
 python -m venv venv
 
@@ -44,12 +52,12 @@ source venv/bin/activate # Linux/macOS
 venv\Scripts\activate # Windows
 ```
 
-# 3. Install the needed requirements
+### 3. Install the needed requirements
 ```bash
 pip install -r requirements.txt
 ```
 
-# 4. Run
+### 4. Run
 ```bash
 python Collatz_Conjecture.py
 
