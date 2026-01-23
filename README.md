@@ -4,7 +4,7 @@ A professional-grade Python tool that explores the $3n + 1$ problem. This applic
 ---
 
 #### Note: entered numbers lose precision as they become more unspeakably high
-#### To test unspeakably high numbers accurately or see the Research behind this project: *[Click Here](https://github.com/saifkayyali3/Collatz_Research)*
+#### To test unspeakably high numbers accurately or see the Research behind this project: *[Click Here](https://github.com/Skayyali3/Collatz_Research)*
 
 ---
 
@@ -41,7 +41,7 @@ Follow these steps to run the project locally:
 
 ### 1. Clone the repository and enter:
 ```bash
-git clone https://github.com/saifkayyali3/CollatzStandard.git
+git clone https://github.com/Skayyali3/CollatzStandard.git
 cd CollatzStandard
 ```
 ### 2. Make a virtual environment
@@ -64,7 +64,7 @@ python Collatz_Conjecture.py
 ```
 ## License
 
-This project is licensed under the MIT License – see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License – see the **[LICENSE](LICENSE)** file for details.
 
 ## Author
 **Saif Kayyali**
