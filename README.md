@@ -1,5 +1,5 @@
 # Collatz Conjecture Visualizer & Data Exporter
-A professional-grade Python tool that explores the $3n + 1$ problem. This application doesn't just calculate sequences; it provides a full suite for data analysis and visualization.
+A high-caliber Python tool that explores the $3n + 1$ problem while providing options of further data analysis and visualization.
 
 ---
 
@@ -60,7 +60,6 @@ pip install -r requirements.txt
 ### 4. Run
 ```bash
 python Collatz_Conjecture.py
-
 ```
 ## License
 
