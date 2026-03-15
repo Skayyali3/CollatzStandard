@@ -29,7 +29,7 @@ A high-caliber Python tool that explores the $3n + 1$ problem while providing op
 ---
 
 <figure>
-  <img width="1798" height="831" alt="Collatz Sequence Visualization for the number 7,384,723" src="https://github.com/user-attachments/assets/78c6cb3a-30a9-41f6-a86b-28035d05be17" />
+  <img width = "1798" height = "831" alt = "Collatz Sequence Visualization for the number 7,384,723" src = "https://github.com/user-attachments/assets/78c6cb3a-30a9-41f6-a86b-28035d05be17" />
   <figcaption>Visualization of the Collatz sequence for 7,384,723 which peaks at over 33 million.</figcaption>
 </figure>
 
