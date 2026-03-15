@@ -1,6 +1,10 @@
 # Collatz Conjecture Visualizer & Data Exporter
 A high-caliber Python tool that explores the $3n + 1$ problem while providing options of further data analysis and visualization.
 
+
+Inspired by:
+*[The Simplest Math Problem No One Can Solve - Collatz Conjecture](https://www.youtube.com/watch?v=094y1Z2wpJg)* by [Veritasium on YouTube](https://www.youtube.com/@veritasium)
+
 ---
 
 #### Note: entered numbers lose precision as they become more unspeakably high
