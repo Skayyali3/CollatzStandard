@@ -6,26 +6,34 @@ import matplotlib.pyplot as mat
 last_sequence = []
 
 def parse_collatz(val):
-    val = val.replace(" ", "").lower()
+    val = val.replace(" ", "").replace(",", "").lower()
     try:
-        if "*10^" in val:
-            base, exp = val.split("*10^")
-            return int(float(base) * (10 ** int(exp)))
-        elif "**" in val:
-            base, exp = val.split("**")
-            if "*10" in base:
-                base_num = float(base.replace("*10", ""))
-                return int(base_num * (10 ** int(exp)))
+        if "*10^" in val or "*10**" in val:
+            base, exp = val.split("*10^") if "*10^" in val else val.split("*10**")
+            exponent = int(exp)
+            if exponent < 0: return None
+            if "." in base:
+                digits, dec_places = base.replace(".", ""), len(base.split(".")[1])
+                return int(digits) * (10 ** (exponent - dec_places))
             else:
-                return int(float(base) ** int(exp))
-        elif "^" in val:
-            base, exp = val.split("^")
-            return int(float(base) ** int(exp))
+                return int(base) * (10 ** int(exp))
+        elif "^" in val or "**" in val:
+            base, exp = val.split("^") if "^" in val else val.split("**")
+            exponent = int(exp)
+            if exponent < 0: return None
+            return int(base) ** exponent
         elif "e" in val:
-            return int(float(val))
+            base, exp = val.split("e")
+            exponent = int(exp)
+            if exponent < 0: return None
+            if "." in base:
+                digits, dec_places = base.replace(".", ""), len(base.split(".")[1])
+                return int(digits) * (10 ** (exponent - dec_places))
+            else:
+                return int(base) * (10 ** exponent)
         else:
-            return int(float(val))
-    except (ValueError, IndexError, OverflowError):
+            return int(val)
+    except:
         return None
 
 def calc(num):
@@ -33,10 +41,10 @@ def calc(num):
     return num
 
 def collatz():
-    global last_sequence 
+    global last_sequence
     try:
         n = parse_collatz(inpt.get())
-        if n is None or n <=  0:
+        if n is None or n <= 0:
             result.config(state = tk.NORMAL)
             result.delete(1.0, tk.END)
             result.insert(tk.END, "Error: Enter a positive integer and make it not larger than your RAM can handle")
