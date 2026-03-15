@@ -24,7 +24,6 @@ A high-caliber Python tool that explores the $3n + 1$ problem while providing op
 
 * Libraries Used: `Tkinter`, `Pandas` and `Matplolib`
 
-
 * Concepts: Data Engineering pipelines, State Management and Mathematical Modeling.
 
 ---
@@ -63,7 +62,7 @@ python Collatz_Conjecture.py
 ```
 ## License
 
-This project is licensed under the MIT License – see the **[LICENSE](LICENSE)** file for details.
+This project is licensed under the MIT License – see the **[license file](LICENSE)** for details.
 
 ## Author
 **Saif Kayyali**

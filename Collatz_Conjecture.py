@@ -3,18 +3,14 @@ from tkinter import filedialog, messagebox, scrolledtext
 import pandas as pd 
 import matplotlib.pyplot as mat
 
-# Global variable to store the last computed sequence
 last_sequence = []
 
-# Parsing Function
 def parse_collatz(val):
     val = val.replace(" ", "").lower()
     try:
-        # Handle 2.7*10^64 style
         if "*10^" in val:
             base, exp = val.split("*10^")
             return int(float(base) * (10 ** int(exp)))
-        # Handle exponentiation like 2**64 or 2.7*10**64
         elif "**" in val:
             base, exp = val.split("**")
             if "*10" in base:
@@ -22,19 +18,16 @@ def parse_collatz(val):
                 return int(base_num * (10 ** int(exp)))
             else:
                 return int(float(base) ** int(exp))
-        # Handle simple exponentiation like 2^64
         elif "^" in val:
             base, exp = val.split("^")
             return int(float(base) ** int(exp))
-        # Handle scientific notation like 2e64
         elif "e" in val:
             return int(float(val))
-        # Plain numbers
         else:
             return int(float(val))
     except (ValueError, IndexError, OverflowError):
         return None
-# Collatz Sequence Simulation
+
 def collatz():
     global last_sequence 
     try:
@@ -52,8 +45,7 @@ def collatz():
             if n % 2 == 0: n //= 2
             else: n = 3 * n + 1
             last_sequence.append(n)
-        
-        # Check the actual number of steps in the list
+
         if len(last_sequence) >= 200 or max(last_sequence) > 1e18: 
              result.config(state=tk.NORMAL)
              result.delete(1.0, tk.END)
@@ -70,7 +62,6 @@ def collatz():
     except ValueError:
         pass
 
-# Visualization function
 def visualize_graph():
     mat.close('all')
     global last_sequence
@@ -84,10 +75,10 @@ def visualize_graph():
     fig, ax = mat.subplots()
     manager = fig.canvas.manager
     try:
-        manager.window.state('zoomed')          # Windows
+        manager.window.state('zoomed')
     except AttributeError:
         try:
-            manager.full_screen_toggle()        # macOS/Linux fallback
+            manager.full_screen_toggle()
         except AttributeError:
             pass
     if is_massive:
@@ -119,7 +110,7 @@ def visualize_graph():
     result.config(state=tk.DISABLED)
     last_sequence = [] 
     inpt.delete(0, tk.END)
-# Export to CSV function
+
 def export_csv():
     if not last_sequence:
         messagebox.showwarning("No Data", "Please click Submit first to generate a sequence!")
@@ -131,7 +122,6 @@ def export_csv():
         df.to_csv(filepath, index=False)
         result.config(text="Data exported successfully!", bg="lime")
 
-# UI Setup
 root=tk.Tk()
 root.geometry("600x500")
 root.title("Collatz Conjecture Visualizer")
@@ -150,7 +140,7 @@ inpt=tk.Entry(root)
 inpt.pack()
 btn=tk.Button(root,text="Submit",command=collatz, bg="royal blue",fg="black")
 btn.pack()
-result=scrolledtext.ScrolledText(root,height=10, width=80, state=tk.DISABLED, wrap=tk.WORD, font=("Times", 12))
+result=scrolledtext.ScrolledText(root, height=10, width=80, state=tk.DISABLED, wrap=tk.WORD, font=("Times", 12))
 result.pack()
 btn_export = tk.Button(root, text="Export CSV", command=export_csv, bg="forest green", fg="white")
 btn_visualize = tk.Button(root, text="Visualize Graph", command=visualize_graph, bg="dark orange", fg="white")

@@ -12,7 +12,7 @@ env/
 Thumbs.db
 desktop.ini
 
-# User data that may accidentally enter
+# User data
 *.csv
 
 # Pyinstaller files
