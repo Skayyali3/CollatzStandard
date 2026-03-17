@@ -4,6 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as mat
 
 last_sequence = []
+current_loop_members = []
 
 def parse_collatz(val):
     val = val.replace(" ", "").replace(",", "").lower()
@@ -41,37 +42,91 @@ def calc(num):
     return num
 
 def collatz():
-    global last_sequence
-    try:
-        n = parse_collatz(inpt.get())
-        if n is None or n <= 0:
-            result.config(state = tk.NORMAL)
-            result.delete(1.0, tk.END)
-            result.insert(tk.END, "Error: Enter a positive integer and make it not larger than your RAM can handle")
-            result.config(state = tk.DISABLED)
-            btn_export.pack_forget()
-            btn_visualize.pack_forget()
-            return
-        last_sequence = [n]
-        while n !=  1:
-            n = calc(n)
-            last_sequence.append(n)
+    global last_sequence, current_loop_members, original_start, was_resumed
+    
+    n = parse_collatz(inpt.get())
 
-        if len(last_sequence) >=  200 or max(last_sequence) > 1e18: 
-             result.config(state = tk.NORMAL)
-             result.delete(1.0, tk.END)
-             result.insert(tk.END, f"Steps: {len(last_sequence)} | Max Value: {max(last_sequence)} \nSequence too long to display (Export for details).")
-             result.config(state = tk.DISABLED)
-        else:
-             sequence_str = ", ".join(map(str, last_sequence))
-             result.config(state = tk.NORMAL)
-             result.delete(1.0, tk.END)
-             result.insert(tk.END, f"Steps: {len(last_sequence)} | Max Value: {max(last_sequence)} \nSequence: {sequence_str}")
-             result.config(state = tk.DISABLED)
-        btn_export.pack(pady = 5)
-        btn_visualize.pack(pady = 5)
-    except ValueError:
-        pass
+    if n is None or n == 0:
+        messagebox.showerror("Error", "Enter a valid starting number (n != 0)")
+        return
+
+    original_start = n
+    last_sequence = [n]
+    current_loop_members = []
+    was_resumed = False
+
+    tortoise = n
+    hare = n
+
+    try:
+        while True:
+            tortoise = calc(tortoise)
+            last_sequence.append(tortoise)
+
+            if tortoise == 1:
+                update_ui_state("Reached 1", "lime", "black")
+                break
+
+            harestep1 = calc(hare)
+            harestep2 = calc(harestep1)
+            hare = harestep2
+
+            if tortoise == hare:
+                if tortoise in [1, 2, 4]:
+                    if tortoise != 1:
+                        continue 
+
+                loop_members = []
+                temp_curr = tortoise
+                while True:
+                    loop_members.append(temp_curr)
+                    temp_curr = calc(temp_curr)
+                    if temp_curr == tortoise: break
+
+                update_ui_state("Loop Detected", "tomato", "black", True, loop_members)
+                break
+            if len(last_sequence) > 100000 or abs(tortoise).bit_length() > 213:
+                update_ui_state("Escape Velocity Hit (Limits)", "black", "yellow")
+                break
+
+    except (OverflowError, MemoryError):
+        messagebox.showerror("Hardware Limit", "RAM capacity exceeded.")
+
+def update_ui_state(status, bg, fg, is_loop = False, loop_members = None):
+    global last_sequence, current_loop_members
+    current_loop_members = loop_members if loop_members else []
+    steps = len(last_sequence)
+    max_v = max(last_sequence) if last_sequence else 0
+    
+    display_max = f"{max_v:.5e}" if abs(max_v) > 1e15 else str(max_v)
+    msg = f"Status: {status}\nSteps: {steps} | Max Value: {display_max}"
+    
+    if is_loop and loop_members:
+        loop_str = ", ".join(map(str, loop_members[:50]))
+        if len(loop_members) > 50: loop_str += "... (See Export)"
+        msg += f"\n\nLoop Detected ({len(loop_members)} steps):\n[{loop_str}]"
+
+    if steps < 200 and abs(max_v) <= 1e14: 
+        if not is_loop: msg += f"\n\nFull Sequence: {last_sequence}"
+    else:
+        msg += "\n\n(Sequence too long for display - Use 'Export CSV' for full data)"
+
+    result.config(state='normal')
+    result.delete(1.0, tk.END)
+    result.insert(tk.INSERT, msg)
+    result.config(bg=bg, fg=fg, state='disabled')
+    
+    btn_export.pack(pady=5)
+    btn_visualize.pack(pady=5)
+
+def clear_display():
+    global last_sequence
+    last_sequence = []
+    result.config(state='normal')
+    result.delete(1.0, tk.END)
+    result.config(state='disabled', bg="turquoise")
+    for widget in [btn_export, btn_visualize]: widget.pack_forget()
+    for entry in [inpt]: entry.delete(0, tk.END)
 
 def visualize_graph():
     mat.close('all')
@@ -112,14 +167,6 @@ def visualize_graph():
         ax.yaxis.set_major_formatter(formatter)
     
     mat.show()
-    btn_visualize.pack_forget()
-    btn_export.pack_forget()
-    result.config(state = tk.NORMAL)
-    result.delete(1.0, tk.END)
-    result.insert(tk.END, "Graph closed. Enter a new number to start again!")
-    result.config(state = tk.DISABLED)
-    last_sequence = [] 
-    inpt.delete(0, tk.END)
 
 def export_csv():
     if not last_sequence:
@@ -132,26 +179,32 @@ def export_csv():
         df.to_csv(filepath, index = False)
         result.config(text = "Data exported successfully!", bg = "lime")
 
-root = tk.Tk()
-root.geometry("600x500")
-root.title("Collatz Conjecture Visualizer")
-root.config(bg = "turquoise")
-lbl = tk.Label(root,text = "Collatz Conjecture Visualizer", font = ("Times", 16, "bold"), bg = "turquoise", fg = "black")
-lbl.pack(pady = 10)
-lbl_1 = tk.Label(root,text = "Enter a number and click Submit\nStandard form and Exponential form are allowed", bg = "turquoise", fg = "black")
-lbl_1.pack()
-lbl_2 = tk.Label(root,text = "Examples of valid inputs:\n27, 2.7e10, 2.7*10^10, 2**64, 2^64", bg = "turquoise", fg = "black")
-lbl_2.pack()
-note = tk.Label(root,text = "Note: Very large numbers may not be precise, check README.md for more details", bg = "turquoise", fg = "red", font = ("bold", 10))
-note.pack()
-warning = tk.Label(root,text = "WARNING: Don't enter numbers larger than your RAM can handle!", bg = "turquoise", fg = "red")
-warning.pack()
-inpt = tk.Entry(root)
-inpt.pack()
-btn = tk.Button(root,text = "Submit",command = collatz, bg = "royal blue",fg = "black")
-btn.pack()
-result = scrolledtext.ScrolledText(root, height = 10, width = 80, state = tk.DISABLED, wrap = tk.WORD, font = ("Times", 12))
-result.pack()
-btn_export = tk.Button(root, text = "Export CSV", command = export_csv, bg = "forest green", fg = "white")
-btn_visualize = tk.Button(root, text = "Visualize Graph", command = visualize_graph, bg = "dark orange", fg = "white")
-root.mainloop()
+try:
+    root = tk.Tk()
+    root.geometry("700x950") 
+    root.title("The Collatz Conjecture Visualizer")
+    root.config(bg = "turquoise")
+
+    tk.Label(root,text = "Collatz Conjecture Visualizer", font = ("Helvetica", 16, "bold"), bg = "turquoise", fg = "black").pack(pady = 10)
+    tk.Label(root,text = "Enter a number and click Submit\nStandard form and Exponential form are allowed", bg = "turquoise", fg = "black").pack()
+    tk.Label(root, text="Unspeakably large numbers may give inaccurate results for your RAM's limitations,\n check README for what is recommended for accurate results.", bg="turquoise", fg="black").pack(pady=5)
+    tk.Label(root, text="WARNING: Don't try extremely large numbers that your RAM can't handle!", bg="turquoise", fg="red", font=("Helvetica", 10, "bold")).pack()
+
+    inpt = tk.Entry(root, justify= "center")
+    inpt.pack(padx = 10, pady = 5)
+
+    btn = tk.Button(root,text = "Submit",command = collatz, bg = "royal blue",fg = "black")
+    btn.pack()
+
+    result = scrolledtext.ScrolledText(root, height = 10, width = 80, state = tk.DISABLED, wrap = tk.WORD, font = ("Times", 12))
+    result.pack()
+
+    btn_export = tk.Button(root, text = "Export CSV", command = export_csv, bg = "forest green", fg = "white")
+    btn_visualize = tk.Button(root, text = "Visualize Graph", command = visualize_graph, bg = "dark orange", fg = "white")
+
+    btn_clear = tk.Button(root, text="Clear All", command = clear_display, bg="red", fg="white")
+    btn_clear.pack(pady=10)
+
+    root.mainloop()
+except (KeyboardInterrupt):
+    print("--- Exiting Simulation ---")
